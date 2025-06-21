@@ -1,5 +1,7 @@
 package com.example.enotes.controller;
 
+import com.example.enotes.dto.CategoryDto;
+import com.example.enotes.dto.CategoryResponse;
 import com.example.enotes.entity.Category;
 import com.example.enotes.service.CategoryService;
 import lombok.Getter;
@@ -20,8 +22,8 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/save-category")
-    public ResponseEntity<?> saveCategory(@RequestBody Category category) {
-        Boolean isSaved = categoryService.saveCategory(category);
+    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
+        Boolean isSaved = categoryService.saveCategory(categoryDto);
         if(isSaved) {
             return new ResponseEntity<>("Category saved successfully.", HttpStatus.CREATED);
         } else {
@@ -31,7 +33,17 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public ResponseEntity<?> getAllCategory() {
-        List<Category> categories = categoryService.getAllCategory();
+        List<CategoryDto> categories = categoryService.getAllCategory();
+        if(CollectionUtils.isEmpty(categories)) {
+            return ResponseEntity.noContent().build();
+        }else{
+            return new ResponseEntity<>(categories, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/active-category")
+    public ResponseEntity<?> getActiveCategory() {
+        List<CategoryResponse> categories = categoryService.getActiveCategory();
         if(CollectionUtils.isEmpty(categories)) {
             return ResponseEntity.noContent().build();
         }else{
