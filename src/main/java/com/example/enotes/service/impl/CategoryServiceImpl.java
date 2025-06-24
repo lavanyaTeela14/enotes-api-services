@@ -31,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setDescription(categoryDto.getDescription());
         category.setIsActive(true);*/
         Category category = mapper.map(categoryDto, Category.class);
-        if(ObjectUtils.isEmpty(category)){
+        if(ObjectUtils.isEmpty(category.getId())){
             category.setIsDeleted(false);
             category.setCreatedOn(new Date());
             category.setCreatedBy(1);
