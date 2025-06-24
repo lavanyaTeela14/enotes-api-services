@@ -21,4 +21,9 @@ public class GlobalExceptionHandler {
         log.error("GlobalExceptionalHandler::handleResourceNotFoundException::getCategoryById::Exception::", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<?> handleValidationException(ValidationException ex) {
+        return new ResponseEntity<>(ex.getErrors(), HttpStatus.BAD_REQUEST);
+    }
 }
