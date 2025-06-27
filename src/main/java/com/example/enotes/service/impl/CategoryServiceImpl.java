@@ -60,7 +60,6 @@ public class CategoryServiceImpl implements CategoryService {
             Category existingCategory = findById.get();
             category.setCreatedOn(existingCategory.getCreatedOn());
             category.setCreatedBy(existingCategory.getCreatedBy());
-
             category.setIsDeleted(existingCategory.getIsDeleted());
         }
     }

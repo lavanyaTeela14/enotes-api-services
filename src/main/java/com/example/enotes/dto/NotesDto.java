@@ -1,6 +1,5 @@
 package com.example.enotes.dto;
 
-import com.example.enotes.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +20,16 @@ public class NotesDto {
     private Date createdOn;
     private Integer updatedBy;
     private Date updatedOn;
+    private FilesDto fileDetails;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class FilesDto{
+        private String originalFileName;
+        private String displayFileName;
+    }
 
     @Getter
     @Setter
