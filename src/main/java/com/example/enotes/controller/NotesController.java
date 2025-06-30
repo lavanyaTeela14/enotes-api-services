@@ -1,6 +1,7 @@
 package com.example.enotes.controller;
 
 import com.example.enotes.dto.NotesDto;
+import com.example.enotes.dto.NotesResponse;
 import com.example.enotes.service.NotesService;
 import com.example.enotes.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,15 @@ public class NotesController {
         {
             return ResponseEntity.noContent().build();
         }
+        return CommonUtil.createBuildResponse(allNotes,HttpStatus.OK);
+    }
+
+    @GetMapping("/user-notes")
+    public ResponseEntity<?> getAllNotesByUserId(@RequestParam(value = "pageNo",defaultValue = "0") Integer pageNo,
+                                                 @RequestParam(value = "pageSize",defaultValue = "3") Integer pageSize)
+    {
+        Integer userId=1;
+       NotesResponse allNotes=notesService.getAllNotesByUserId(userId,pageNo,pageSize);
         return CommonUtil.createBuildResponse(allNotes,HttpStatus.OK);
     }
 }
