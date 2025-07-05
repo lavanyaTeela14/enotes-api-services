@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +54,13 @@ public class NotesServiceImpl implements NotesService {
 
         ObjectMapper obj=new ObjectMapper();
         NotesDto notesDto=obj.readValue(notes, NotesDto.class);
+        notesDto.setIsDeleted(false);
+        notesDto.setDeletedOn(null);
+
+        if(!ObjectUtils.isEmpty(notesDto.getId()))
+        {
+            updateNotes(notesDto,file);
+        }
 
         checkCategoryExists(notesDto.getCategory());
         Notes notesMap=mapper.map(notesDto, Notes.class);
@@ -61,7 +70,10 @@ public class NotesServiceImpl implements NotesService {
         {
             notesMap.setFileDetails(fileDetails);
         }else {
-            notesMap.setFileDetails(null);
+            if(ObjectUtils.isEmpty(notesDto.getId()))
+            {
+                notesMap.setFileDetails(null);
+            }
         }
 
         Notes saveNotes=notesRepository.save(notesMap);
@@ -70,6 +82,14 @@ public class NotesServiceImpl implements NotesService {
             return true;
         }
         return false;
+    }
+
+    private void updateNotes(NotesDto notesDto, MultipartFile file) throws Exception{
+        Notes existNotes=notesRepository.findById(notesDto.getId()).orElseThrow(()->new ResourceNotFoundException("Invalid Notes Id!!"));
+        if(ObjectUtils.isEmpty(file))
+        {
+            notesDto.setFileDetails(mapper.map(existNotes.getFileDetails(), NotesDto.FilesDto.class));
+        }
     }
 
     private FileDetails saveFileDetails(MultipartFile file) throws IOException {
@@ -133,7 +153,7 @@ public class NotesServiceImpl implements NotesService {
     @Override
     public NotesResponse getAllNotesByUserId(Integer userId, Integer pageNo, Integer pageSize) {
         Pageable pageable= PageRequest.of(pageNo,pageSize);
-        Page<Notes> pageNotes= notesRepository.findByCreatedBy(userId,pageable);
+        Page<Notes> pageNotes= notesRepository.findByCreatedByAndIsDeletedFalse(userId,pageable);
         List<NotesDto> notes=pageNotes.get().map(n->mapper.map(n,NotesDto.class)).toList();
         NotesResponse response=NotesResponse.builder()
                 .notes(notes)
@@ -147,5 +167,47 @@ public class NotesServiceImpl implements NotesService {
         return response;
     }
 
+    @Override
+    public void softDelete(Integer id) throws Exception {
+        Notes notes=notesRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Invalid Notes Id!!"));
+        notes.setIsDeleted(true);
+        notes.setDeletedOn(LocalDateTime.now());
+        notesRepository.save(notes);
+    }
 
+    @Override
+    public void restoreNotes(Integer id) throws Exception {
+        Notes notes=notesRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Invalid Notes Id!!"));
+        notes.setIsDeleted(false);
+        notes.setDeletedOn(null);
+        notesRepository.save(notes);
+    }
+
+    @Override
+    public List<NotesDto> getUserRecycleBinNotes(Integer id) {
+        List<Notes> notes=notesRepository.findByCreatedByAndIsDeletedTrue(id);
+        List<NotesDto> notesDtoList =notes.stream().map(note->mapper.map(note,NotesDto.class)).toList();
+        return notesDtoList;
+    }
+
+    @Override
+    public void hardDelete(Integer id) throws Exception{
+        Notes notes=notesRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Notes not available to delete"));
+        if(notes.getIsDeleted())
+        {
+            notesRepository.delete(notes);
+        }
+        else{
+            throw new IllegalArgumentException("Hard delete cannot be done!!");
+        }
+    }
+
+    @Override
+    public void deleteRecyclebin(Integer userId) {
+        List<Notes> notes=notesRepository.findByCreatedByAndIsDeletedTrue(userId);
+        if(!ObjectUtils.isEmpty(notes))
+        {
+            notesRepository.deleteAll(notes);
+        }
+    }
 }

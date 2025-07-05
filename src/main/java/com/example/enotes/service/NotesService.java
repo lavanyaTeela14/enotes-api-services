@@ -11,4 +11,14 @@ public interface NotesService {
     List<NotesDto> getAllNotes();
 
     NotesResponse getAllNotesByUserId(Integer userId,Integer pageNo,Integer pageSize);
+
+    void softDelete(Integer id) throws Exception;
+
+    void restoreNotes(Integer id) throws Exception;
+
+    List<NotesDto> getUserRecycleBinNotes(Integer id);
+
+    void hardDelete(Integer id) throws Exception;
+
+    void deleteRecyclebin(Integer userId);
 }
