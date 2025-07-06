@@ -1,5 +1,6 @@
 package com.example.enotes.service;
 
+import com.example.enotes.dto.FavouriteNotesDto;
 import com.example.enotes.dto.NotesDto;
 import com.example.enotes.dto.NotesResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,4 +22,10 @@ public interface NotesService {
     void hardDelete(Integer id) throws Exception;
 
     void deleteRecyclebin(Integer userId);
+
+    void favouriteNotes(Integer noteId) throws Exception;
+    void unfavouriteNotes(Integer favNoteId) throws Exception;
+    List<FavouriteNotesDto> getUserFavouriteNotes();
+
+    Boolean copyNotes(Integer id) throws Exception;
 }

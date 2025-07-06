@@ -1,7 +1,9 @@
 package com.example.enotes.controller;
 
+import com.example.enotes.dto.FavouriteNotesDto;
 import com.example.enotes.dto.NotesDto;
 import com.example.enotes.dto.NotesResponse;
+import com.example.enotes.entity.FavouriteNotes;
 import com.example.enotes.service.NotesService;
 import com.example.enotes.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,4 +91,42 @@ public class NotesController {
         notesService.deleteRecyclebin(userId);
         return CommonUtil.createBuildResponseMessage("Notes deleted successfully",HttpStatus.OK);
     }
+
+    @GetMapping("/fav/{noteId}")
+    public ResponseEntity<?> favouriteNotes(@PathVariable Integer noteId) throws Exception
+    {
+        notesService.favouriteNotes(noteId);
+        return CommonUtil.createBuildResponseMessage("NOtes added to Fav",HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/unfav/{favId}")
+    public ResponseEntity<?> unfavouriteNotes(@PathVariable Integer favId) throws Exception
+    {
+        notesService.unfavouriteNotes(favId);
+        return CommonUtil.createBuildResponseMessage("Removed from favouites",HttpStatus.OK);
+    }
+
+    @GetMapping("/fav-notes")
+    public ResponseEntity<?> getUserFavouriteNotes()
+    {
+
+        List<FavouriteNotesDto> notes=notesService.getUserFavouriteNotes();
+        if(ObjectUtils.isEmpty(notes))
+        {
+            return ResponseEntity.noContent().build();
+        }
+        return CommonUtil.createBuildResponse(notes,HttpStatus.OK);
+    }
+
+    @GetMapping("/copy/{id}")
+    public ResponseEntity<?> copyNotes(@PathVariable Integer id) throws Exception
+    {
+        Boolean copied=notesService.copyNotes(id);
+        if(copied)
+        {
+            return CommonUtil.createBuildResponseMessage("Notes copied successfully",HttpStatus.CREATED);
+        }
+        return CommonUtil.createErrorResponseMessage("Notes not copied",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }
