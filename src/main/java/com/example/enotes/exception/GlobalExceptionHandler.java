@@ -13,13 +13,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception ex) {
-        log.error("GlobalExceptionalHandler::handleException::getCategoryById::Exception::", ex.getMessage());
         return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        log.error("GlobalExceptionalHandler::handleResourceNotFoundException::getCategoryById::Exception::", ex.getMessage());
         return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

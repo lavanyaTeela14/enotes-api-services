@@ -1,5 +1,6 @@
 package com.example.enotes.service.impl;
 
+import com.example.enotes.dto.EmailRequest;
 import com.example.enotes.dto.UserDto;
 import com.example.enotes.entity.Roles;
 import com.example.enotes.entity.User;
@@ -29,17 +30,37 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
-    public Boolean register(UserDto userDto) {
+    public Boolean register(UserDto userDto) throws Exception {
         validation.userValidation(userDto);
         User user=modelMapper.map(userDto,User.class);
         setRoles(userDto,user);
         User savedUser=userRepository.save(user);
         if(!ObjectUtils.isEmpty(savedUser))
         {
+            sendEmail(savedUser);
             return true;
         }
         return false;
+    }
+
+    private void sendEmail(User savedUser) throws Exception {
+        String message="Hi,<b>"+savedUser.getFirstName()+"</b> "
+                + "<br> Your account registered sucessfully.<br>"
+                +"<br> Click the below link verify & Activate your account <br>"
+                +"<a href='#'>Click Here</a> <br><br>"
+                +"Thanks,<br>Enotes.com"
+                ;
+        EmailRequest emailRequest=EmailRequest.builder()
+                .to(savedUser.getEmail())
+                .title("Account Creation Message!")
+                .subject("Account successfull creation message")
+                .text(message)
+                .build();
+        emailService.sendEmail(emailRequest);
     }
 
     private void setRoles(UserDto userDto, User user) {
