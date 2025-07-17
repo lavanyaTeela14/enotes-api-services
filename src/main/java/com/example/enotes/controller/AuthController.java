@@ -3,6 +3,7 @@ package com.example.enotes.controller;
 import com.example.enotes.dto.UserDto;
 import com.example.enotes.service.UserService;
 import com.example.enotes.util.CommonUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,10 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveUser(@RequestBody UserDto userDto) throws Exception {
-       Boolean register= userService.register(userDto);
+    public ResponseEntity<?> saveUser(@RequestBody UserDto userDto, HttpServletRequest request) throws Exception {
+        String url = request.getRequestURL().toString();
+        url=url.replace(request.getServletPath(),"");
+        Boolean register= userService.register(userDto,url);
        if(register)
        {
            return CommonUtil.createBuildResponseMessage("User Registered successfully", HttpStatus.CREATED);

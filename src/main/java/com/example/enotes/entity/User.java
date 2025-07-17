@@ -26,4 +26,7 @@ public class User {
     private String mobNo;
     @OneToMany(cascade=CascadeType.ALL)
     private List<Roles> roles;
+    @OneToOne(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name="status_id")
+    private AccountStatus status;
 }

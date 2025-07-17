@@ -21,6 +21,11 @@ public class GlobalExceptionHandler {
         return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(SuccessException.class)
+    public ResponseEntity<?> handleSuccessException(SuccessException ex) {
+        return CommonUtil.createBuildResponseMessage(ex.getMessage(), HttpStatus.OK);
+    }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<?> handleValidationException(ValidationException ex) {
         return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.BAD_REQUEST);
