@@ -1,16 +1,24 @@
 package com.example.enotes.service.impl;
 
+import com.example.enotes.config.security.CustomUserDetails;
 import com.example.enotes.dto.EmailRequest;
+import com.example.enotes.dto.LoginRequest;
+import com.example.enotes.dto.LoginResponse;
 import com.example.enotes.dto.UserDto;
 import com.example.enotes.entity.AccountStatus;
 import com.example.enotes.entity.Roles;
 import com.example.enotes.entity.User;
 import com.example.enotes.repository.RolesRepository;
 import com.example.enotes.repository.UserRepository;
+import com.example.enotes.service.JwtService;
 import com.example.enotes.service.UserService;
 import com.example.enotes.util.Validation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -33,7 +41,16 @@ public class UserServiceImpl implements UserService {
     private ModelMapper modelMapper;
 
     @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public Boolean register(UserDto userDto, String url) throws Exception {
@@ -45,6 +62,7 @@ public class UserServiceImpl implements UserService {
                 .verificationCode(UUID.randomUUID().toString())
                 .build();
         user.setStatus(accountStatus);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser=userRepository.save(user);
         if(!ObjectUtils.isEmpty(savedUser))
         {
@@ -52,6 +70,23 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        Authentication authentication=authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword()));
+        if (authentication.isAuthenticated())
+        {
+            CustomUserDetails customUserDetails=(CustomUserDetails)authentication.getPrincipal();
+            String token= jwtService.generatetoken(customUserDetails.getUser());
+            LoginResponse loginResponse=LoginResponse.builder()
+                    .user(modelMapper.map(customUserDetails.getUser(),UserDto.class))
+                    .token(token)
+                    .build();
+            return loginResponse;
+        }
+        return null;
     }
 
     private void sendEmail(User savedUser,String url) throws Exception {

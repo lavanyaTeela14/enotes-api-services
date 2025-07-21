@@ -24,7 +24,7 @@ public class User {
     private String email;
     private String password;
     private String mobNo;
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Roles> roles;
     @OneToOne(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name="status_id")
