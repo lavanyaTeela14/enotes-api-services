@@ -1,8 +1,11 @@
 package com.example.enotes.service.impl;
 
 import com.example.enotes.entity.User;
+import com.example.enotes.exception.JwtTokenExpiredException;
 import com.example.enotes.service.JwtService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -78,7 +81,21 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().verifyWith(decryptKey(secretKey)).build().parseSignedClaims(token).getPayload();
+        try{
+            return Jwts.parser().verifyWith(decryptKey(secretKey)).build().parseSignedClaims(token).getPayload();
+        }
+        catch (ExpiredJwtException e)
+        {
+            throw new JwtTokenExpiredException("Token is expired");
+        }
+        catch (JwtException e)
+        {
+            throw new JwtTokenExpiredException("Invalid JWT token");
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
     }
 
     private SecretKey decryptKey(String secretKey) {
