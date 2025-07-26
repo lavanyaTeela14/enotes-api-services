@@ -11,17 +11,17 @@ public interface NotesService {
     Boolean saveNotes(String notesDto, MultipartFile file) throws Exception;
     List<NotesDto> getAllNotes();
 
-    NotesResponse getAllNotesByUserId(Integer userId,Integer pageNo,Integer pageSize);
+    NotesResponse getAllNotesByUserId(Integer pageNo,Integer pageSize);
 
     void softDelete(Integer id) throws Exception;
 
     void restoreNotes(Integer id) throws Exception;
 
-    List<NotesDto> getUserRecycleBinNotes(Integer id);
+    List<NotesDto> getUserRecycleBinNotes();
 
     void hardDelete(Integer id) throws Exception;
 
-    void deleteRecyclebin(Integer userId);
+    void deleteRecyclebin();
 
     void favouriteNotes(Integer noteId) throws Exception;
     void unfavouriteNotes(Integer favNoteId) throws Exception;

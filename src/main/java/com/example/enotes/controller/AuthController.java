@@ -2,7 +2,7 @@ package com.example.enotes.controller;
 
 import com.example.enotes.dto.LoginRequest;
 import com.example.enotes.dto.LoginResponse;
-import com.example.enotes.dto.UserDto;
+import com.example.enotes.dto.UserRequest;
 import com.example.enotes.service.UserService;
 import com.example.enotes.util.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,10 +22,10 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveUser(@RequestBody UserDto userDto, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> saveUser(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception {
         String url = request.getRequestURL().toString();
         url=url.replace(request.getServletPath(),"");
-        Boolean register= userService.register(userDto,url);
+        Boolean register= userService.register(userRequest,url);
        if(register)
        {
            return CommonUtil.createBuildResponseMessage("User Registered successfully", HttpStatus.CREATED);

@@ -4,7 +4,7 @@ import com.example.enotes.config.security.CustomUserDetails;
 import com.example.enotes.dto.EmailRequest;
 import com.example.enotes.dto.LoginRequest;
 import com.example.enotes.dto.LoginResponse;
-import com.example.enotes.dto.UserDto;
+import com.example.enotes.dto.UserRequest;
 import com.example.enotes.entity.AccountStatus;
 import com.example.enotes.entity.Roles;
 import com.example.enotes.entity.User;
@@ -53,10 +53,10 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public Boolean register(UserDto userDto, String url) throws Exception {
-        validation.userValidation(userDto);
-        User user=modelMapper.map(userDto,User.class);
-        setRoles(userDto,user);
+    public Boolean register(UserRequest userRequest, String url) throws Exception {
+        validation.userValidation(userRequest);
+        User user=modelMapper.map(userRequest,User.class);
+        setRoles(userRequest,user);
         AccountStatus accountStatus= AccountStatus.builder()
                 .isActive(false)
                 .verificationCode(UUID.randomUUID().toString())
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
             CustomUserDetails customUserDetails=(CustomUserDetails)authentication.getPrincipal();
             String token= jwtService.generatetoken(customUserDetails.getUser());
             LoginResponse loginResponse=LoginResponse.builder()
-                    .user(modelMapper.map(customUserDetails.getUser(),UserDto.class))
+                    .user(modelMapper.map(customUserDetails.getUser(), UserRequest.class))
                     .token(token)
                     .build();
             return loginResponse;
@@ -109,8 +109,8 @@ public class UserServiceImpl implements UserService {
         emailService.sendEmail(emailRequest);
     }
 
-    private void setRoles(UserDto userDto, User user) {
-        List<Integer> reqRoleId=userDto.getRoles().stream().map(r->r.getId()).toList();
+    private void setRoles(UserRequest userRequest, User user) {
+        List<Integer> reqRoleId= userRequest.getRoles().stream().map(r->r.getId()).toList();
         List<Roles> roles=rolesRepository.findAllById(reqRoleId);
         user.setRoles(roles);
     }

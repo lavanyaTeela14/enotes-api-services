@@ -1,9 +1,5 @@
 package com.example.enotes.dto;
 
-import com.example.enotes.entity.Roles;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.util.List;
@@ -13,12 +9,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {
+public class UserResponse {
     private Integer id;
     private String firstName;
     private String LastName;
     private String email;
-    private String password;
+    private ToDoDto.StatusDto status;
     private String mobNo;
     private List<RolesDto> roles;
 
@@ -30,5 +26,15 @@ public class UserDto {
     public static class RolesDto {
         private Integer id;
         private String name;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class StatusDto {
+        private Integer id;
+        private Boolean isActive;
     }
 }

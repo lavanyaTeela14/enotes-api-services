@@ -12,7 +12,7 @@ public interface NotesRepository extends JpaRepository<Notes, Integer> {
 
     Page<Notes> findByCreatedBy(Integer userId, Pageable pageable);
 
-    List<Notes> findByCreatedByAndIsDeletedTrue(Integer id);
+    List<Notes> findByCreatedByAndIsDeletedTrue(Integer userId);
 
     Page<Notes> findByCreatedByAndIsDeletedFalse(Integer userId, Pageable pageable);
 

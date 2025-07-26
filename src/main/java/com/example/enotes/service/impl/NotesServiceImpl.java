@@ -12,7 +12,9 @@ import com.example.enotes.repository.FavouriteRepository;
 import com.example.enotes.repository.FileRepository;
 import com.example.enotes.repository.NotesRepository;
 import com.example.enotes.service.NotesService;
+import com.example.enotes.util.CommonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,8 +158,9 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesResponse getAllNotesByUserId(Integer userId, Integer pageNo, Integer pageSize) {
+    public NotesResponse getAllNotesByUserId(Integer pageNo, Integer pageSize) {
         Pageable pageable= PageRequest.of(pageNo,pageSize);
+        Integer userId=CommonUtil.getLoggedInUser().getId();
         Page<Notes> pageNotes= notesRepository.findByCreatedByAndIsDeletedFalse(userId,pageable);
         List<NotesDto> notes=pageNotes.get().map(n->mapper.map(n,NotesDto.class)).toList();
         NotesResponse response=NotesResponse.builder()
@@ -189,8 +192,9 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public List<NotesDto> getUserRecycleBinNotes(Integer id) {
-        List<Notes> notes=notesRepository.findByCreatedByAndIsDeletedTrue(id);
+    public List<NotesDto> getUserRecycleBinNotes() {
+        Integer userId=CommonUtil.getLoggedInUser().getId();
+        List<Notes> notes=notesRepository.findByCreatedByAndIsDeletedTrue(userId);
         List<NotesDto> notesDtoList =notes.stream().map(note->mapper.map(note,NotesDto.class)).toList();
         return notesDtoList;
     }
@@ -208,7 +212,8 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public void deleteRecyclebin(Integer userId) {
+    public void deleteRecyclebin() {
+        Integer userId=CommonUtil.getLoggedInUser().getId();
         List<Notes> notes=notesRepository.findByCreatedByAndIsDeletedTrue(userId);
         if(!ObjectUtils.isEmpty(notes))
         {
@@ -218,7 +223,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public void favouriteNotes(Integer noteId) throws Exception {
-        Integer userId=1;
+        Integer userId= CommonUtil.getLoggedInUser().getId();
         Notes notes=notesRepository.findById(noteId).orElseThrow(()-> new ResourceNotFoundException("No fav notes found"));
         FavouriteNotes favouriteNotes=FavouriteNotes.builder()
                 .notes(notes)
@@ -235,7 +240,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public List<FavouriteNotesDto> getUserFavouriteNotes() {
-        Integer userId=1;
+        Integer userId=CommonUtil.getLoggedInUser().getId();
         List<FavouriteNotes> favNote=favouriteRepository.findByUserId(userId);
         return favNote.stream().map(fn->mapper.map(fn, FavouriteNotesDto.class)).toList();
     }
