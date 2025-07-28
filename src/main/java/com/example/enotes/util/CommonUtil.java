@@ -3,6 +3,7 @@ package com.example.enotes.util;
 import com.example.enotes.config.security.CustomUserDetails;
 import com.example.enotes.entity.User;
 import com.example.enotes.handler.GenericResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,6 +48,12 @@ public class CommonUtil {
                 .message(message)
                 .build();
         return response.createResponse();
+    }
+
+    public static String getUrl(HttpServletRequest request) {
+        String apiUrl = request.getRequestURL().toString(); // http:localhost:8080/api/v1/auth
+        apiUrl = apiUrl.replace(request.getServletPath(), ""); // http:localhost:8080
+        return apiUrl;
     }
 
     public static User getLoggedInUser() {
