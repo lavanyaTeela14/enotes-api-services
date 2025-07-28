@@ -13,6 +13,8 @@ public interface NotesService {
 
     NotesResponse getAllNotesByUserId(Integer pageNo,Integer pageSize);
 
+    NotesResponse getAllNotesByUserSearch(Integer pageNo,Integer pageSize,String keyword);
+
     void softDelete(Integer id) throws Exception;
 
     void restoreNotes(Integer id) throws Exception;
