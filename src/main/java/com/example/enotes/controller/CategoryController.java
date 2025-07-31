@@ -2,6 +2,7 @@ package com.example.enotes.controller;
 
 import com.example.enotes.dto.CategoryDto;
 import com.example.enotes.dto.CategoryResponse;
+import com.example.enotes.endpoint.CategoryEndpoint;
 import com.example.enotes.entity.Category;
 import com.example.enotes.exception.ResourceNotFoundException;
 import com.example.enotes.service.CategoryService;
@@ -21,14 +22,12 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/category")
-public class CategoryController {
+public class CategoryController implements CategoryEndpoint {
 
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/save")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
         Boolean isSaved = categoryService.saveCategory(categoryDto);
         if(isSaved) {
@@ -40,8 +39,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> getAllCategory() {
         List<CategoryDto> categories = categoryService.getAllCategory();
         if(CollectionUtils.isEmpty(categories)) {
@@ -51,8 +49,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/active")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @Override
     public ResponseEntity<?> getActiveCategory() {
         List<CategoryResponse> categories = categoryService.getActiveCategory();
         if(CollectionUtils.isEmpty(categories)) {
@@ -62,8 +59,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> getCategoryById(@PathVariable("id") Integer id) throws Exception {
       /*  try{
             CategoryDto category = categoryService.getCategoryById(id);
@@ -88,8 +84,7 @@ public class CategoryController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> deleteCategory(@PathVariable("id") Integer id) {
         Boolean isDeleted = categoryService.deleteCategory(id);
         if(isDeleted) {

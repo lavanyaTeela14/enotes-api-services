@@ -3,6 +3,7 @@ package com.example.enotes.controller;
 import com.example.enotes.dto.LoginRequest;
 import com.example.enotes.dto.LoginResponse;
 import com.example.enotes.dto.UserRequest;
+import com.example.enotes.endpoint.AuthEndpoint;
 import com.example.enotes.service.AuthService;
 import com.example.enotes.util.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,12 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth")
-public class AuthController {
+public class AuthController implements AuthEndpoint {
     @Autowired
     private AuthService userService;
 
-    @PostMapping("/save")
+    @Override
     public ResponseEntity<?> saveUser(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception {
 
         String url = request.getRequestURL().toString();
@@ -39,7 +39,7 @@ public class AuthController {
        return CommonUtil.createErrorResponseMessage("User not registered", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PostMapping("/login")
+    @Override
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest)
     {
         log.info("AuthController : login() : login successfully");

@@ -1,6 +1,7 @@
 package com.example.enotes.controller;
 
 import com.example.enotes.dto.PswdResetRequest;
+import com.example.enotes.endpoint.HomeEndpoint;
 import com.example.enotes.exception.ResourceNotFoundException;
 import com.example.enotes.service.HomeService;
 import com.example.enotes.service.UserService;
@@ -14,8 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/home")
-public class HomeController {
+public class HomeController implements HomeEndpoint {
 
     Logger log= LoggerFactory.getLogger(HomeController.class);
 
@@ -25,7 +25,7 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/verify")
+    @Override
     public ResponseEntity<?> verifyUserAccount(@RequestParam Integer userId, @RequestParam String verificationCode) throws Exception {
         log.info("HomeController : verifyUserAccount() : execution Start");
         Boolean verifyAccount=homeService.verifyStatus(userId,verificationCode);
@@ -39,7 +39,7 @@ public class HomeController {
         return CommonUtil.createBuildResponseMessage("Account verification success", HttpStatus.CREATED);
     }
 
-    @GetMapping("/send-email-reset")
+    @Override
     public ResponseEntity<?> sendEmailForPasswordReset(@RequestParam String email, HttpServletRequest request)
             throws Exception {
         log.info("HomeController : sendEmailForPasswordReset() : execution Start");
@@ -48,7 +48,7 @@ public class HomeController {
         return CommonUtil.createBuildResponseMessage("Email Send Success !! Check Email Reset Password", HttpStatus.OK);
     }
 
-    @GetMapping("/verify-pswd-link")
+    @Override
     public ResponseEntity<?> verifyPasswordResetLink(@RequestParam Integer uid, @RequestParam String code)
             throws Exception {
         log.info("HomeController : verifyPasswordResetLink() : execution Start");
@@ -57,7 +57,7 @@ public class HomeController {
         return CommonUtil.createBuildResponseMessage("verification success", HttpStatus.OK);
     }
 
-    @PostMapping("/reset-pswd")
+    @Override
     public ResponseEntity<?> resetPassword(@RequestBody PswdResetRequest pswdResetRequest) throws Exception {
         log.info("HomeController : resetPassword() : execution Start");
         userService.resetPassword(pswdResetRequest);
