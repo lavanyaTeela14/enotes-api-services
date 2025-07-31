@@ -10,6 +10,7 @@ import com.example.enotes.repository.UserRepository;
 import com.example.enotes.service.JwtService;
 import com.example.enotes.service.AuthService;
 import com.example.enotes.util.Validation;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -51,7 +53,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Boolean register(UserRequest userRequest, String url) throws Exception {
+        log.info("AuthServiceImpl : register : excution started");
         validation.userValidation(userRequest);
+        log.info("AuthServiceImpl : register : user validation done");
         User user=modelMapper.map(userRequest,User.class);
         setRoles(userRequest,user);
         AccountStatus accountStatus= AccountStatus.builder()
@@ -61,20 +65,26 @@ public class AuthServiceImpl implements AuthService {
         user.setStatus(accountStatus);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser=userRepository.save(user);
+        log.info("AuthServiceImpl : register : user saved");
         if(!ObjectUtils.isEmpty(savedUser))
         {
             sendEmailForRegister(savedUser,url);
+            log.info("AuthServiceImpl : register : email sent");
             return true;
         }
+        log.info("AuthServiceImpl : register : excution end");
         return false;
     }
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
+        log.info("AuthServiceImpl : login : excution started");
         Authentication authentication=authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword()));
+        log.info("AuthServiceImpl : login : authentication done");
         if (authentication.isAuthenticated())
         {
+            log.info("AuthServiceImpl : login : authentication success");
             CustomUserDetails customUserDetails=(CustomUserDetails)authentication.getPrincipal();
             String token= jwtService.generatetoken(customUserDetails.getUser());
             LoginResponse loginResponse=LoginResponse.builder()
@@ -83,10 +93,12 @@ public class AuthServiceImpl implements AuthService {
                     .build();
             return loginResponse;
         }
+        log.info("AuthServiceImpl : login : excution end");
         return null;
     }
 
     private void sendEmailForRegister(User savedUser,String url) throws Exception {
+        log.info("AuthServiceImpl : sendEmailForRegister : excution started");
         String message="Hi,<b>[[username]]</b> "
                 + "<br> Your account register sucessfully.<br>"
                 +"<br> Click the below link verify & Active your account <br>"
@@ -103,12 +115,18 @@ public class AuthServiceImpl implements AuthService {
                 .subject("Account successfull creation message")
                 .text(message)
                 .build();
+        log.info("AuthServiceImpl : sendEmailForRegister : email request created");
         emailService.sendEmail(emailRequest);
+        log.info("AuthServiceImpl : sendEmailForRegister : excution end");
     }
 
     private void setRoles(UserRequest userRequest, User user) {
+        log.info("AuthServiceImpl : setRoles : excution started");
         List<Integer> reqRoleId= userRequest.getRoles().stream().map(r->r.getId()).toList();
+        log.info("AuthServiceImpl : setRoles : role list created");
         List<Roles> roles=rolesRepository.findAllById(reqRoleId);
+        log.info("AuthServiceImpl : setRoles : role list fetched");
         user.setRoles(roles);
+        log.info("AuthServiceImpl : setRoles : excution end");
     }
 }
