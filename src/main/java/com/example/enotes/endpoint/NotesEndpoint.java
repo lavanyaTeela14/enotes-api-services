@@ -5,38 +5,40 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.example.enotes.util.Constants.*;
+
 @RequestMapping("/api/v1/notes")
 public interface NotesEndpoint {
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize(ROLE_USER)
     public ResponseEntity<?> saveNotes(@RequestParam String notes, @RequestParam(required = false) MultipartFile file) throws Exception;
 
     @GetMapping("/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(ROLE_ADMIN)
     public ResponseEntity<?> getAllNotes();
 
     @GetMapping("/user-notes")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getAllNotesByUserId(@RequestParam(value = "pageNo",defaultValue = "0") Integer pageNo,
-                                                 @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize);
+    @PreAuthorize(ROLE_USER)
+    public ResponseEntity<?> getAllNotesByUserId(@RequestParam(value = "pageNo",defaultValue = PAGE_NO) Integer pageNo,
+                                                 @RequestParam(value = "pageSize",defaultValue = PAGE_SIZE) Integer pageSize);
 
     @GetMapping("/search")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getAllNotesByUserSearch(@RequestParam(name = "key",defaultValue = "") String keyword
-            ,@RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo, @RequestParam(name = "pageSize",defaultValue = "10") Integer pageSize);
+    @PreAuthorize(ROLE_USER)
+    public ResponseEntity<?> getAllNotesByUserSearch(@RequestParam(name = "key",defaultValue = PAGE_NO) String keyword
+            ,@RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo, @RequestParam(name = PAGE_SIZE,defaultValue = "10") Integer pageSize);
 
 
     @GetMapping("/delete/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize(ROLE_USER)
     public ResponseEntity<?> deleteNotes(@PathVariable Integer id) throws Exception;
 
     @GetMapping("/restore/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize(ROLE_USER)
     public ResponseEntity<?> restoreNotes(@PathVariable Integer id) throws Exception;
 
     @GetMapping("/recycle-bin")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize(ROLE_USER)
     public ResponseEntity<?> getAllUserRecycledNotes();
 
     @DeleteMapping("/delete/{id}")

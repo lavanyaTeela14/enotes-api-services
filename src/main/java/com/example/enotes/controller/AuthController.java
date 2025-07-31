@@ -24,7 +24,7 @@ public class AuthController implements AuthEndpoint {
     private AuthService userService;
 
     @Override
-    public ResponseEntity<?> saveUser(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> saveUser(UserRequest userRequest, HttpServletRequest request) throws Exception {
 
         String url = request.getRequestURL().toString();
         url=url.replace(request.getServletPath(),"");
@@ -40,7 +40,7 @@ public class AuthController implements AuthEndpoint {
     }
 
     @Override
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest)
+    public ResponseEntity<?> login(LoginRequest loginRequest)
     {
         log.info("AuthController : login() : login successfully");
        LoginResponse response= userService.login(loginRequest);
