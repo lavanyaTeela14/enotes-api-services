@@ -53,7 +53,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf->csrf.disable())
-                .authorizeHttpRequests(req->req.requestMatchers("/api/v1/home/**","/api/v1/auth/**")
+                .authorizeHttpRequests(req->req.requestMatchers("/api/v1/home/**","/api/v1/auth/**","/swagger-ui/**","/v3/api-docs/**","/enotes-docs/**","/enotes-api-docs/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
