@@ -40,8 +40,8 @@ public class CategoryServiceImpl implements CategoryService {
     public boolean saveCategory(CategoryDto categoryDto) {
         validation.categoryValidation(categoryDto);
 
-        Boolean existingCateory=categoryRepository.existsByName(categoryDto.getName().trim());
-        if(existingCateory){
+        Boolean existingCategory=categoryRepository.existsByName(categoryDto.getName().trim());
+        if(existingCategory){
             throw new ExistingDataException("Category already exists");
         }
 
