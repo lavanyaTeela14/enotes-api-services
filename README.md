@@ -92,8 +92,70 @@ enotes-api-services/
 - Install **Maven 3.6+**
 - Install **MySQL** and create a database (example: `enotes_db`)
 
+---
+
 ### 🔹 Clone the Repository
 ```bash
 git clone https://github.com/lavanyaTeela14/enotes-api-services.git
 cd enotes-api-services
+
+---
+
+### 🔹 Configure Database
+src/main/resources/application.properties:
+spring.datasource.url=jdbc:mysql://localhost:3306/enotes_db
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+jwt.secret=yourSecretKey
+
+---
+
+🔹 Build & Run
+mvn clean install
+mvn spring-boot:run
+
+---
+
+App will start at:
+👉 http://localhost:8080
+
+---
+
+🧪 Testing
+
+Use Postman collection (enotes-api-collection.json) to test endpoints
+
+Or open Swagger UI (if configured) at:
+👉 http://localhost:8080/swagger-ui.html
+mvn test
+
+---
+
+📬 Response Format
+All responses follow a standardized structure:
+{
+  "status": "success",
+  "message": "Note created successfully",
+  "data": {
+    "id": 1,
+    "title": "First Note",
+    "content": "This is my first note."
+  }
+}
+
+---
+
+🔄 API Testing Workflow
+Here’s the recommended sequence for testing the APIs in Postman:
+Register a user → POST /api/auth/register
+Login → POST /api/auth/login → copy jwtToken
+Create a category → POST /api/categories
+Create a note → POST /api/notes
+Fetch all notes → GET /api/notes
+Update a note → PUT /api/notes/{id}
+Delete a note → DELETE /api/notes/{id}
+
 
