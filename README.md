@@ -92,8 +92,6 @@ enotes-api-services/
 - Install **Maven 3.6+**
 - Install **MySQL** and create a database (example: `enotes_db`)
 
----
-
 ### 🔹 Clone the Repository
 ```bash
 git clone https://github.com/lavanyaTeela14/enotes-api-services.git
