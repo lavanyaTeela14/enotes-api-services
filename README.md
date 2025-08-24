@@ -18,25 +18,25 @@ It supports **user management, authentication, categories, and note CRUD operati
 
 ---
 
-## 🗂️ Project Structure
+## 📂 Project Structure
+```text
 enotes-api-services/
 │── src/main/java/com/example/enotes/
-│ ├── controller/ # REST controllers (API endpoints)
-│ ├── dto/ # Data Transfer Objects
-│ ├── entity/ # JPA Entities (User, Notes, Category, etc.)
-│ ├── exception/ # Global exception handling
-│ ├── handler/ # Response handling classes
-│ ├── repository/ # Spring Data JPA Repositories
-│ ├── security/ # JWT, Authentication & Authorization
-│ ├── service/ # Business logic layer
-│ └── EnotesApiServicesApplication.java # Main class
+│   ├── controller/              # REST controllers (API endpoints)
+│   ├── dto/                     # Data Transfer Objects
+│   ├── entity/                   # JPA Entities (User, Notes, Category, etc.)
+│   ├── exception/                # Global exception handling
+│   ├── handler/                  # Response handling classes
+│   ├── repository/               # Spring Data JPA Repositories
+│   ├── security/                 # JWT, Authentication & Authorization
+│   ├── service/                  # Business logic layer
+│   └── EnotesApiServicesApplication.java   # Main class
 │
 │── src/main/resources/
-│ ├── application.properties # DB & server configurations
+│   ├── application.properties    # DB & server configurations
 │
-│── pom.xml # Maven dependencies
-│── README.md # Project documentation
-
+│── pom.xml                       # Maven dependencies
+│── README.md                     # Project documentation
 
 ---
 
